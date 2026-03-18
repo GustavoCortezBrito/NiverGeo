@@ -2,9 +2,11 @@
 
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import ConfirmationModalFamilia from "@/app/components/ConfirmationModalFamilia";
 
 export default function Familia() {
   const [confetti, setConfetti] = useState<Array<{id: number; x: number; delay: number; duration: number; color: string}>>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const colors = ["#fda4af", "#fb7185", "#f472b6"];
@@ -21,24 +23,13 @@ export default function Familia() {
     window.open("https://maps.app.goo.gl/tUtGhV1JK4U65Huc6?g_st=aw", "_blank");
   };
 
-  const handleCalendar = () => {
-    const startDate = "20260328T190000";
-    const endDate = "20260328T230000";
-    const title = "Aniversário de 20 anos da Geovanna";
-    const details = "Venha comemorar comigo este dia especial!";
-    const location = "Rua Alegre 123, Cidade Brasileira";
-    
-    const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${startDate}/${endDate}&details=${encodeURIComponent(details)}&location=${encodeURIComponent(location)}`;
-    
-    window.open(googleCalendarUrl, "_blank");
-  };
-
   const handleConfirm = () => {
-    alert("Funcionalidade de confirmação será implementada em breve!");
+    setIsModalOpen(true);
   };
 
   return (
-    <div className="relative w-screen min-h-screen bg-gradient-to-br from-[#fce7f3] via-[#fff5f7] to-[#fce7f3] flex items-center justify-center p-4 pb-8">
+    <>
+      <div className="relative w-screen min-h-screen bg-gradient-to-br from-[#fce7f3] via-[#fff5f7] to-[#fce7f3] flex items-center justify-center p-4 pb-8">
       {/* Confetti sutil */}
       {confetti.map((piece) => (
         <motion.div
@@ -184,6 +175,8 @@ export default function Familia() {
           </motion.div>
         </div>
       </div>
-    </div>
+      </div>
+      <ConfirmationModalFamilia isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+    </>
   );
 }
