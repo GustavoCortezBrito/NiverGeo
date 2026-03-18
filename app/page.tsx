@@ -2,9 +2,11 @@
 
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import ConfirmationModal from "./components/ConfirmationModal";
 
 export default function Home() {
   const [confetti, setConfetti] = useState<Array<{id: number; x: number; delay: number; duration: number; color: string}>>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const colors = ["#fda4af", "#fb7185", "#f472b6"];
@@ -18,7 +20,7 @@ export default function Home() {
   }, []);
 
   const handleLocation = () => {
-    window.open("https://maps.app.goo.gl/tUtGhV1JK4U65Huc6?g_st=aw", "_blank");
+    window.open("https://www.google.com/maps?q=-22.2219202,-51.4386292&z=17&hl=pt-BR", "_blank");
   };
 
   const handleCalendar = () => {
@@ -26,7 +28,7 @@ export default function Home() {
     const endDate = "20260328T230000";
     const title = "Aniversário de 20 anos da Geovanna";
     const details = "Venha comemorar comigo este dia especial!";
-    const location = "Rua Alegre 123, Cidade Brasileira";
+    const location = "Chacara Petrin, -22.2219202, -51.4386292";
     
     const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${startDate}/${endDate}&details=${encodeURIComponent(details)}&location=${encodeURIComponent(location)}`;
     
@@ -34,11 +36,12 @@ export default function Home() {
   };
 
   const handleConfirm = () => {
-    alert("Funcionalidade de confirmação será implementada em breve!");
+    setIsModalOpen(true);
   };
 
   return (
     <div className="relative w-screen min-h-screen bg-gradient-to-br from-[#fce7f3] via-[#fff5f7] to-[#fce7f3] flex items-center justify-center p-4 pb-8">
+      <ConfirmationModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       {/* Confetti sutil */}
       {confetti.map((piece) => (
         <motion.div
@@ -105,7 +108,7 @@ export default function Home() {
         </motion.div>
 
         <motion.div
-          className="space-y-2 sm:space-y-3 mb-8 sm:mb-12"
+          className="space-y-4 sm:space-y-5 mb-8 sm:mb-12"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
@@ -113,15 +116,32 @@ export default function Home() {
           <p className="text-base sm:text-lg font-semibold text-gray-700" style={{ fontFamily: "Montserrat" }}>
             VENHA COMEMORAR COMIGO<br />ESTE DIA ESPECIAL
           </p>
+          
           <div className="bg-gradient-to-r from-[#c93d6d] via-[#dc7594] to-[#c93d6d] text-white px-8 sm:px-10 py-3 sm:py-4 rounded-full inline-block text-xl sm:text-2xl font-bold shadow-lg">
             28 DE MARÇO
           </div>
+          
           <p className="text-base sm:text-lg font-semibold text-gray-800" style={{ fontFamily: "Montserrat" }}>
             ÀS 19:30 HORAS
           </p>
-          <p className="text-sm sm:text-base text-gray-700 font-semibold" style={{ fontFamily: "Montserrat" }}>
-            CHACARA LINES, KILOMETRO 486,5<br />APÓS POSTO COMBOIO 2 KM
-          </p>
+          
+          <motion.div
+            className="bg-white bg-opacity-70 backdrop-blur-sm rounded-2xl px-6 sm:px-8 py-4 sm:py-5 shadow-lg border-2 border-[#dc7594] border-opacity-30 mt-4"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.2 }}
+          >
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <span className="text-2xl">📍</span>
+              <p className="text-sm sm:text-base font-bold text-[#c93d6d]" style={{ fontFamily: "Montserrat" }}>
+                LOCAL DO EVENTO
+              </p>
+            </div>
+            <p className="text-sm sm:text-base text-gray-800 font-semibold" style={{ fontFamily: "Montserrat" }}>
+              CHACARA PETRIN<br />
+              <span className="text-xs sm:text-sm text-gray-600">Pra baixo do Rancho Quarto de Milha</span>
+            </p>
+          </motion.div>
         </motion.div>
 
         {/* Ícones de ação */}
@@ -184,6 +204,24 @@ export default function Home() {
           </motion.div>
         </div>
       </div>
+
+      {/* Footer */}
+      <motion.div
+        className="absolute bottom-3 w-full text-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2 }}
+      >
+        <a
+          href="https://www.instagram.com/gustavo_cortezb/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-[#dc7594] hover:text-[#c93d6d] transition-colors font-semibold"
+          style={{ fontFamily: "Montserrat" }}
+        >
+          Desenvolvido por Gustavo Cortez de Brito © 2026
+        </a>
+      </motion.div>
     </div>
   );
 }
