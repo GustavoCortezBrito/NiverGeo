@@ -204,6 +204,24 @@ export default function Home() {
           </motion.div>
         </div>
       </div>
+
+      {/* Footer */}
+      <motion.div
+        className="absolute bottom-3 w-full text-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2 }}
+      >
+        <a
+          href="https://www.instagram.com/gustavo_cortezb/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-[#dc7594] hover:text-[#c93d6d] transition-colors font-semibold"
+          style={{ fontFamily: "Montserrat" }}
+        >
+          Desenvolvido por Gustavo Cortez de Brito © 2026
+        </a>
+      </motion.div>
     </div>
   );
 }
