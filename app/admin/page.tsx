@@ -12,14 +12,41 @@ interface Confirmation {
 }
 
 export default function AdminPage() {
-  const [confirmations, setConfirmations] = useState<Confirmation[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [authenticated, setAuthenticated] = useState(false);
+  const [password, setPassword] = useState('');
+  const [authError, setAuthError] = useState('');
+  const [authLoading, setAuthLoading] = useState(false);
 
-  useEffect(() => {
-    fetchConfirmations();
-  }, []);
+  const [confirmations, setConfirmations] = useState<Confirmation[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthError('');
+    setAuthLoading(true);
+
+    try {
+      const res = await fetch('/api/admin-auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+
+      if (res.ok) {
+        setAuthenticated(true);
+        fetchConfirmations();
+      } else {
+        setAuthError('Senha incorreta');
+      }
+    } catch {
+      setAuthError('Erro ao autenticar');
+    } finally {
+      setAuthLoading(false);
+    }
+  };
 
   const fetchConfirmations = async () => {
+    setLoading(true);
     try {
       const response = await fetch('/api/confirmations');
       const data = await response.json();
@@ -31,12 +58,57 @@ export default function AdminPage() {
     }
   };
 
+  if (!authenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#fce7f3] via-[#fff5f7] to-[#fce7f3] flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-sm">
+          <div className="text-center mb-6">
+            <span className="text-4xl">🔒</span>
+            <h1 className="text-2xl font-bold text-[#c93d6d] mt-2">Área Restrita</h1>
+            <p className="text-gray-500 text-sm mt-1">Digite a senha para acessar</p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-4">
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Senha"
+              required
+              className="w-full px-4 py-3 border-2 border-[#dc7594] rounded-lg focus:outline-none focus:border-[#c93d6d] text-gray-800"
+            />
+
+            {authError && (
+              <p className="text-red-500 text-sm text-center">{authError}</p>
+            )}
+
+            <button
+              type="submit"
+              disabled={authLoading}
+              className="w-full bg-gradient-to-r from-[#c93d6d] to-[#dc7594] text-white font-bold py-3 rounded-lg hover:shadow-lg transition disabled:opacity-50"
+            >
+              {authLoading ? 'Entrando...' : 'Entrar'}
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#fce7f3] via-[#fff5f7] to-[#fce7f3] p-4 sm:p-8">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-2xl sm:text-4xl font-bold text-[#c93d6d] mb-6 sm:mb-8 text-center sm:text-left">
-          Confirmações de Presença
-        </h1>
+        <div className="flex items-center justify-between mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-4xl font-bold text-[#c93d6d]">
+            Confirmações de Presença
+          </h1>
+          <button
+            onClick={() => setAuthenticated(false)}
+            className="text-sm text-gray-500 hover:text-[#c93d6d] transition font-semibold"
+          >
+            Sair
+          </button>
+        </div>
 
         {loading ? (
           <div className="flex justify-center items-center py-20">
@@ -48,7 +120,6 @@ export default function AdminPage() {
           </div>
         ) : (
           <>
-            {/* Contador */}
             <div className="bg-white rounded-2xl shadow p-4 mb-6 flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-[#fce7f3] flex items-center justify-center text-[#c93d6d] font-bold text-lg">
                 {confirmations.length}
@@ -58,7 +129,7 @@ export default function AdminPage() {
               </p>
             </div>
 
-            {/* Cards no mobile */}
+            {/* Cards mobile */}
             <div className="flex flex-col gap-4 sm:hidden">
               {confirmations.map((c) => (
                 <div key={c.id} className="bg-white rounded-2xl shadow p-4 border-l-4 border-[#c93d6d]">
@@ -77,7 +148,7 @@ export default function AdminPage() {
               ))}
             </div>
 
-            {/* Tabela no desktop */}
+            {/* Tabela desktop */}
             <div className="hidden sm:block bg-white rounded-2xl shadow overflow-hidden">
               <table className="w-full">
                 <thead className="bg-[#fce7f3]">
